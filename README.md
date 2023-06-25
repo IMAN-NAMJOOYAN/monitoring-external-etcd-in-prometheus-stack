@@ -39,6 +39,12 @@ helm install prometheus-stack kube-prometheus-stack-46.8.0.tgz --version 46.8.0 
 
 ![image](https://github.com/IMAN-NAMJOOYAN/monitoring-external-etcd-in-prometheus-stack/assets/16554389/94753bfb-3f37-48f8-a014-df6dc2433dc9)
 
+```
+6- check etcd dashboard in grafana.
+```
+![image](https://github.com/IMAN-NAMJOOYAN/monitoring-external-etcd-in-prometheus-stack/assets/16554389/9627d5d2-0bb0-4f7b-ac9e-2baa5f83c4ab)
+```
+
 
 
 
