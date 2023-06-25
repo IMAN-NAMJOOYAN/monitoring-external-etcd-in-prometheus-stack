@@ -1,0 +1,93 @@
+# Set alertmanager image
+alertmanager:
+  alertmanagerSpec:
+    image:
+      registry: <private registry name or ip address>
+      repository: prometheus/alertmanager
+      tag: v0.25.0
+      sha: ""
+# Use PVC with longhorn storage class for Alert Manager
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+# Set kube-webhook and Prometheus Operator image
+prometheusOperator:
+  admissionWebhooks:
+    patch:
+      enabled: true
+      image:
+        registry: <private registry name or ip address>
+        repository: prometheus/ingress-nginx/kube-webhook-certgen
+        tag: v20221220-controller-v1.5.1-58-g787ea74b6
+        sha: ""
+        pullPolicy: IfNotPresent
+      resources: {}
+
+  image:
+    registry: <private registry name or ip address>
+    repository: prometheus/prometheus-operator/prometheus-operator
+    # if not set appVersion field from Chart.yaml is used
+    tag: ""
+    sha: ""
+    pullPolicy: IfNotPresent
+
+# Set Prometheus ConfigReloaderr image
+  prometheusConfigReloader:
+    image:
+      registry: <private registry name or ip address>
+      repository: prometheus/prometheus-operator/prometheus-config-reloader
+      # if not set appVersion field from Chart.yaml is used
+      tag: ""
+      sha: ""
+   
+#Use PVC with longhorn storage class for Prometheus
+prometheus:
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 50Gi
+    secrets: ['etcd-client-cert']
+    
+    image:
+      registry: <private registry name or ip address>
+      repository: prometheus/prometheus
+      tag: v2.44.0
+      sha: ""
+
+# Config etcd monitoring
+kubeEtcd:
+  enabled: true
+  endpoints:
+   - 10.0.85.93
+   - 10.0.85.94
+   - 10.0.85.95
+  service:
+    enabled: true
+    port: 2379
+    targetPort: 2379
+  serviceMonitor:
+    enabled: true
+    scheme: https
+    insecureSkipVerify: false
+    serverName: localhost
+    caFile: /etc/prometheus/secrets/etcd-client-cert/ca.pem
+    certFile: /etc/prometheus/secrets/etcd-client-cert/etcd-cert.pem
+    keyFile: /etc/prometheus/secrets/etcd-client-cert/etcd-key.pem
+    interval: ""
+    sampleLimit: 0
+    targetLimit: 0
+    labelNameLengthLimit: 0
+    labelValueLengthLimit: 0
+    metricRelablelings: []
+    relabelings: []
+    additionalLabels: {}
